@@ -1,0 +1,9 @@
+{
+  "name": "working-hours-calculator-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Working Hours Calculator",
+  "main": "index.js",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+} 

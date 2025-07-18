@@ -1,11 +1,11 @@
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// API Configuration for Netlify Functions
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/.netlify/functions';
 
 export const API_ENDPOINTS = {
-  LOGIN: `${API_BASE_URL}/api/login`,
-  ZING_CREDENTIALS: `${API_BASE_URL}/api/zing-credentials`,
-  CALCULATE_MANUAL: `${API_BASE_URL}/api/calculate-manual`,
-  CALCULATE_AUTO: `${API_BASE_URL}/api/calculate-auto`,
+  LOGIN: `${API_BASE_URL}/login`,
+  ZING_CREDENTIALS: `${API_BASE_URL}/zing-credentials`,
+  CALCULATE_MANUAL: `${API_BASE_URL}/calculate-manual`,
+  CALCULATE_AUTO: `${API_BASE_URL}/calculate-auto`,
 };
 
 export const apiRequest = async (
