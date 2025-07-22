@@ -5,6 +5,22 @@ import { calculateWorkingHours, calculateWeeklyHours, WeeklyResults } from '../u
 import { calculateLiveHours, LiveTrackingData } from '../utils/liveTracker';
 import { WorkingHoursData } from '../types';
 
+// Helper function to format time according to selected format
+const formatTimeDisplay = (time24: string, format: '12' | '24'): string => {
+  if (format === '24' || !time24 || time24 === 'Already completed!') {
+    return time24;
+  }
+  
+  const [hours, minutes] = time24.split(':').map(Number);
+  if (isNaN(hours) || isNaN(minutes)) {
+    return time24;
+  }
+  
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  
+  return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+};
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'live'>('daily');
   const [timeFormat, setTimeFormat] = useState<'12' | '24'>('24');
@@ -462,7 +478,7 @@ export default function Dashboard() {
                   {/* Current Time Display */}
                   <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="text-lg font-bold text-blue-700 mb-1">
-                      Current Time: {liveResults.currentTime}
+                      Current Time: {formatTimeDisplay(liveResults.currentTime, timeFormat)}
                     </div>
                     <div className="text-blue-600 font-medium">
                       {liveResults.isCurrentlyWorking ? '🟢 Currently Working' : '🔴 On Break'}
@@ -511,7 +527,7 @@ export default function Dashboard() {
                       <span className="font-semibold text-indigo-700">Target Completion</span>
                     </div>
                     <div className="text-2xl font-bold text-indigo-700 mb-1">
-                      {liveResults.completionTime}
+                      {formatTimeDisplay(liveResults.completionTime, timeFormat)}
                     </div>
                     <div className="text-indigo-600 text-sm">
                       {liveResults.isCurrentlyWorking 
