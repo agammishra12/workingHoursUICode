@@ -284,40 +284,6 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Goal Progress Section */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                        <span className="font-semibold text-gray-900">Daily Goal: 8:30</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-blue-600">
-                          {Math.min(Math.round(((results.totalWorkingHours * 60 + results.totalWorkingMinutes) / (8.5 * 60)) * 100), 100)}%
-                        </div>
-                        <div className="text-xs text-gray-500">Complete</div>
-                      </div>
-                    </div>
-                    
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
-                      <div 
-                        className={`h-4 rounded-full transition-all duration-1000 ${
-                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? 'bg-gradient-to-r from-green-500 to-green-600' :
-                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                          'bg-gradient-to-r from-red-500 to-red-600'
-                        }`}
-                        style={{ width: `${Math.min(((results.totalWorkingHours * 60 + results.totalWorkingMinutes) / (8.5 * 60)) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                    
-                    {/* Goal Status */}
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">0:00</span>
-                      <span className="font-medium text-blue-600">8:30 Goal</span>
-                      <span className="text-gray-600">12:00+</span>
-                    </div>
-                  </div>
                   {/* Progress Bar */}
                   <div>
                     <div className="flex justify-between text-gray-700 font-medium mb-2">
@@ -338,43 +304,12 @@ export default function Dashboard() {
 
                   {/* Achievement Badge */}
                   {results.totalWorkingHours >= 8 && results.totalWorkingMinutes >= 30 && (
-                    <div className="flex items-center justify-center gap-3 text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg py-3 mb-6">
+                    <div className="flex items-center justify-center gap-3 text-white bg-green-600 rounded-lg py-3">
                       <Award className="w-6 h-6" />
                       <span className="font-semibold">Daily Goal Achieved! 🎉</span>
                     </div>
                   )}
 
-                  {/* Goal Status Card */}
-                  <div className={`p-4 rounded-lg border mb-6 ${
-                    ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? 'bg-green-50 border-green-200' :
-                    ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? 'bg-yellow-50 border-yellow-200' :
-                    'bg-red-50 border-red-200'
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className={`font-semibold ${
-                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? 'text-green-700' :
-                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? 'text-yellow-700' :
-                          'text-red-700'
-                        }`}>
-                          {((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? 'Goal Exceeded!' :
-                           ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? 'Close to Goal' :
-                           'Below Goal'}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {results.missedHoursNum > 0 || results.missedMinutesNum > 0 
-                            ? `${results.missedHours} remaining to reach 8:30`
-                            : `${Math.floor(((results.totalWorkingHours * 60 + results.totalWorkingMinutes) - 510) / 60)}:${String(((results.totalWorkingHours * 60 + results.totalWorkingMinutes) - 510) % 60).padStart(2, '0')} over goal`
-                          }
-                        </div>
-                      </div>
-                      <div className="text-3xl">
-                        {((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? '🎉' :
-                         ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? '😊' :
-                         '😕'}
-                      </div>
-                    </div>
-                  </div>
                   {/* Detailed Stats */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200">
@@ -496,39 +431,6 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Weekly Goal Progress */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                        <span className="font-semibold text-gray-900">Weekly Goal: 42:30 (5 days × 8:30)</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-green-600">
-                          {Math.min(Math.round((weeklyResults.averageWorkingHours * 60 + weeklyResults.averageWorkingMinutes) / (8.5 * 60) * 100), 100)}%
-                        </div>
-                        <div className="text-xs text-gray-500">Avg Daily</div>
-                      </div>
-                    </div>
-                    
-                    {/* Weekly Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
-                      <div 
-                        className={`h-4 rounded-full transition-all duration-1000 ${
-                          ((weeklyResults.averageWorkingHours * 60 + weeklyResults.averageWorkingMinutes) >= 510) ? 'bg-gradient-to-r from-green-500 to-green-600' :
-                          ((weeklyResults.averageWorkingHours * 60 + weeklyResults.averageWorkingMinutes) >= 480) ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
-                          'bg-gradient-to-r from-red-500 to-red-600'
-                        }`}
-                        style={{ width: `${Math.min(((weeklyResults.averageWorkingHours * 60 + weeklyResults.averageWorkingMinutes) / (8.5 * 60)) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">0:00</span>
-                      <span className="font-medium text-green-600">8:30 Daily Goal</span>
-                      <span className="text-gray-600">12:00+</span>
-                    </div>
-                  </div>
                   {/* Daily Breakdown */}
                   <div className="max-h-64 overflow-y-auto">
                     <h4 className="font-semibold text-gray-900 mb-4">Daily Breakdown</h4>
@@ -568,13 +470,6 @@ export default function Dashboard() {
         )}
       </div>
 
-                  {/* Weekly Achievement */}
-                  {((weeklyResults.averageWorkingHours * 60 + weeklyResults.averageWorkingMinutes) >= 510) && (
-                    <div className="flex items-center justify-center gap-3 text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg py-3 mb-6">
-                      <Award className="w-6 h-6" />
-                      <span className="font-semibold">Weekly Goal Achieved! 🏆</span>
-                    </div>
-                  )}
       {/* Instructions Modal */}
       {showInstructions && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -646,22 +541,13 @@ export default function Dashboard() {
                   </ol>
                 </div>
               </div>
-                          <div className="text-right flex items-center gap-3">
-                            {/* Goal Progress for each day */}
-                            <div className="w-16 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className={`h-2 rounded-full ${
-                                  ((day.workingHours * 60 + day.workingMinutes) >= 510) ? 'bg-green-500' :
-                                  ((day.workingHours * 60 + day.workingMinutes) >= 480) ? 'bg-yellow-500' :
-                                  'bg-red-500'
-                                }`}
-                                style={{ width: `${Math.min(((day.workingHours * 60 + day.workingMinutes) / (8.5 * 60)) * 100, 100)}%` }}
-                              ></div>
-                            </div>
+              
               <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <div className="text-xs text-gray-500 w-12">
-                              {Math.min(Math.round(((day.workingHours * 60 + day.workingMinutes) / (8.5 * 60)) * 100), 100)}%
-                            </div>
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-yellow-800 mb-2">Important Notes:</p>
+                    <ul className="text-yellow-700 space-y-1">
                       <li>• Times must be in pairs (in/out)</li>
                       <li>• Target: 8 hours 30 minutes per day</li>
                       <li>• Uneven swipes will show a warning</li>
