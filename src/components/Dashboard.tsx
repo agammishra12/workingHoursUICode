@@ -382,7 +382,11 @@ export default function Dashboard() {
                     
                     return (
                       <div className={`flex items-center justify-center gap-3 text-white ${bgColor} rounded-lg py-3`}>
-                      <Award className="w-6 h-6" />
+                        <Award className="w-6 h-6" />
+                        <span className="font-semibold">{achievementLevel}!</span>
+                      </div>
+                    );
+                  })()}
 
                   {/* Detailed Stats */}
                   <div className="space-y-3">
