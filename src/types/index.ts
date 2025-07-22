@@ -14,6 +14,21 @@ export interface WorkingHoursData {
   officeEmoji: string;
 }
 
+export interface LiveTrackingData {
+  currentTime: string;
+  currentWorkingTime: string;
+  currentWorkingHours: number;
+  currentWorkingMinutes: number;
+  totalOfficeTime: string;
+  totalBreakTime: string;
+  remainingTime: string;
+  remainingHours: number;
+  remainingMinutes: number;
+  completionTime: string;
+  progressPercentage: number;
+  isCurrentlyWorking: boolean;
+  emoji: string;
+}
 export interface User {
   id: string;
   email: string;

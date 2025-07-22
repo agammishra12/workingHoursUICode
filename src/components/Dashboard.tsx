@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, LogOut, Calculator, Coffee, AlertCircle, BarChart3, X, Info, Target, TrendingUp, Award } from 'lucide-react';
+import { Clock, LogOut, Calculator, Coffee, AlertCircle, BarChart3, X, Info, Target, TrendingUp, Award, Zap, Timer, CheckCircle2 } from 'lucide-react';
 import { calculateWorkingHours, calculateWeeklyHours, WeeklyResults } from '../utils/workingHoursCalculator';
+import { calculateLiveHours, LiveTrackingData } from '../utils/liveTracker';
 import { WorkingHoursData } from '../types';
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState<'daily' | 'weekly'>('daily');
+  const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'live'>('daily');
   const [timeFormat, setTimeFormat] = useState<'12' | '24'>('24');
   const [timeEntries, setTimeEntries] = useState('');
   const [weeklyEntries, setWeeklyEntries] = useState<string[]>(Array(7).fill(''));
+  const [liveEntries, setLiveEntries] = useState('');
   const [results, setResults] = useState<WorkingHoursData | null>(null);
   const [weeklyResults, setWeeklyResults] = useState<WeeklyResults | null>(null);
+  const [liveResults, setLiveResults] = useState<LiveTrackingData | null>(null);
   const [error, setError] = useState('');
   const [showInstructions, setShowInstructions] = useState(false);
   const navigate = useNavigate();
@@ -41,6 +44,17 @@ export default function Dashboard() {
     }
   };
 
+  const handleLiveCalculate = () => {
+    try {
+      setError('');
+      const data = calculateLiveHours(liveEntries);
+      setLiveResults(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setLiveResults(null);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/');
@@ -51,6 +65,14 @@ export default function Dashboard() {
       setTimeEntries('09:00 AM, 12:30 PM, 01:30 PM, 06:00 PM');
     } else {
       setTimeEntries('09:00, 12:30, 13:30, 18:00');
+    }
+  };
+
+  const handleLiveExampleInput = () => {
+    if (timeFormat === '12') {
+      setLiveEntries('09:00 AM, 12:30 PM, 01:30 PM');
+    } else {
+      setLiveEntries('09:00, 12:30, 13:30');
     }
   };
 
@@ -89,16 +111,20 @@ export default function Dashboard() {
   const handleTimeFormatChange = (format: '12' | '24') => {
     setTimeFormat(format);
     setTimeEntries('');
+    setLiveEntries('');
     setWeeklyEntries(Array(7).fill(''));
     setResults(null);
+    setLiveResults(null);
     setWeeklyResults(null);
     setError('');
   };
 
   const clearInputs = () => {
     setTimeEntries('');
+    setLiveEntries('');
     setWeeklyEntries(Array(7).fill(''));
     setResults(null);
+    setLiveResults(null);
     setWeeklyResults(null);
     setError('');
   };
@@ -170,10 +196,10 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Tab Navigation */}
         <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-xl shadow-sm border p-1 inline-flex">
+          <div className="bg-white rounded-xl shadow-sm border p-1 inline-flex flex-wrap gap-1">
             <button
               onClick={() => setActiveTab('daily')}
-              className={`py-3 px-8 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${
+              className={`py-3 px-6 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
                 activeTab === 'daily'
                   ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -183,8 +209,19 @@ export default function Dashboard() {
               Daily Calculator
             </button>
             <button
+              onClick={() => setActiveTab('live')}
+              className={`py-3 px-6 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
+                activeTab === 'live'
+                  ? 'bg-orange-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              <Zap className="w-5 h-5" />
+              Live Tracker
+            </button>
+            <button
               onClick={() => setActiveTab('weekly')}
-              className={`py-3 px-8 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${
+              className={`py-3 px-6 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
                 activeTab === 'weekly'
                   ? 'bg-green-600 text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -337,6 +374,187 @@ export default function Dashboard() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Calculate</h3>
                   <p className="text-gray-600">
                     Enter your work times to see your daily breakdown
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : activeTab === 'live' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Live Input */}
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Live Time Tracker</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Timer className="w-5 h-5 text-orange-600" />
+                    <span className="font-semibold text-orange-700">How it works</span>
+                  </div>
+                  <p className="text-orange-600 text-sm">
+                    Enter your incomplete swipe data (odd number of entries). The system will use the current time to calculate your progress and predict when you'll complete 8:30 hours.
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Swipe Times (incomplete data)
+                  </label>
+                  <textarea
+                    value={liveEntries}
+                    onChange={(e) => setLiveEntries(e.target.value)}
+                    placeholder={timeFormat === '12' ? 'Example: 09:00 AM, 12:30 PM, 01:30 PM' : 'Example: 09:00, 12:30, 13:30'}
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 resize-none"
+                  />
+                </div>
+                
+                {error && (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                )}
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleLiveCalculate}
+                    disabled={!liveEntries.trim()}
+                    className="flex-1 bg-orange-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <Zap className="w-5 h-5" />
+                    Track Live
+                  </button>
+                  <button
+                    onClick={handleLiveExampleInput}
+                    className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium"
+                  >
+                    Example
+                  </button>
+                  <button
+                    onClick={clearInputs}
+                    className="px-4 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors duration-200 font-medium"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Results */}
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              {liveResults ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <Timer className="w-6 h-6 text-orange-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">Live Progress</h3>
+                    </div>
+                    <span className="text-4xl">{liveResults.emoji}</span>
+                  </div>
+                  
+                  {/* Current Time Display */}
+                  <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="text-lg font-bold text-blue-700 mb-1">
+                      Current Time: {liveResults.currentTime}
+                    </div>
+                    <div className="text-blue-600 font-medium">
+                      {liveResults.isCurrentlyWorking ? '🟢 Currently Working' : '🔴 On Break'}
+                    </div>
+                  </div>
+                  
+                  {/* Main Stats */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="text-2xl font-bold text-green-700 mb-1">
+                        {liveResults.currentWorkingTime}
+                      </div>
+                      <div className="text-green-600 font-medium">Hours So Far</div>
+                    </div>
+                    
+                    <div className="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+                      <div className="text-2xl font-bold text-purple-700 mb-1">
+                        {liveResults.remainingTime}
+                      </div>
+                      <div className="text-purple-600 font-medium">Time Remaining</div>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div>
+                    <div className="flex justify-between text-gray-700 font-medium mb-2">
+                      <span>Progress to 8:30 target</span>
+                      <span>{liveResults.progressPercentage}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <div 
+                        className={`h-3 rounded-full transition-all duration-1000 ${
+                          liveResults.progressPercentage >= 100 ? 'bg-green-500' :
+                          liveResults.progressPercentage >= 90 ? 'bg-yellow-500' :
+                          'bg-orange-500'
+                        }`}
+                        style={{ width: `${Math.min(liveResults.progressPercentage, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Completion Time Prediction */}
+                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Target className="w-5 h-5 text-indigo-600" />
+                      <span className="font-semibold text-indigo-700">Target Completion</span>
+                    </div>
+                    <div className="text-2xl font-bold text-indigo-700 mb-1">
+                      {liveResults.completionTime}
+                    </div>
+                    <div className="text-indigo-600 text-sm">
+                      {liveResults.isCurrentlyWorking 
+                        ? 'If you continue working without breaks' 
+                        : 'When you resume working (excluding current break time)'}
+                    </div>
+                  </div>
+
+                  {/* Achievement Badge */}
+                  {liveResults.progressPercentage >= 100 && (
+                    <div className="flex items-center justify-center gap-3 text-white bg-green-600 rounded-lg py-3">
+                      <CheckCircle2 className="w-6 h-6" />
+                      <span className="font-semibold">Target Already Achieved! 🎉</span>
+                    </div>
+                  )}
+
+                  {/* Additional Stats */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-3">
+                        <Clock className="w-5 h-5 text-blue-600" />
+                        <span className="font-medium text-blue-700">Office Time</span>
+                      </div>
+                      <span className="font-semibold text-blue-700">{liveResults.totalOfficeTime}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <div className="flex items-center gap-3">
+                        <Coffee className="w-5 h-5 text-yellow-600" />
+                        <span className="font-medium text-yellow-700">Break Time</span>
+                      </div>
+                      <span className="font-semibold text-yellow-700">{liveResults.totalBreakTime}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center h-full py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+                    <Zap className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Track Live</h3>
+                  <p className="text-gray-600">
+                    Enter your incomplete swipe data to see real-time progress
                   </p>
                 </div>
               )}
@@ -539,6 +757,21 @@ export default function Dashboard() {
                       <span>Find <strong>Raw Swipes</strong>, copy and paste here</span>
                     </li>
                   </ol>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Zap className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-orange-800 mb-2">Live Tracker Feature:</p>
+                    <ul className="text-orange-700 space-y-1">
+                      <li>• Use when you have incomplete swipe data (odd number of entries)</li>
+                      <li>• System uses current time to calculate progress</li>
+                      <li>• Shows when you'll complete your 8:30 target</li>
+                      <li>• Perfect for real-time tracking during work hours</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               
