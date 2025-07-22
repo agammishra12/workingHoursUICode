@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, LogOut, Calculator, Coffee, AlertCircle, BarChart3, X, Info, CheckCircle, Target, TrendingUp, Award, Zap, Star } from 'lucide-react';
+import { Clock, LogOut, Calculator, Coffee, AlertCircle, BarChart3, X, Info, Target, TrendingUp, Award } from 'lucide-react';
 import { calculateWorkingHours, calculateWeeklyHours, WeeklyResults } from '../utils/workingHoursCalculator';
 import { WorkingHoursData } from '../types';
 
@@ -16,7 +16,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const dayAbbr = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   const handleCalculate = () => {
     try {
@@ -103,97 +104,93 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-pink-400/20 to-red-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-green-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
-
-      <div className="relative z-10 p-6">
-        {/* Header */}
-        <header className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 mb-6">
-          <div className="px-8 py-6">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg">
-                  <Clock className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-white mb-1">TimeTracker Pro</h1>
-                  <p className="text-blue-200 text-lg">Welcome back, {user.name}! ✨</p>
-                </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl">
+                <Clock className="w-7 h-7 text-white" />
               </div>
-              
-              <div className="flex items-center gap-6">
-                {/* Time Format Selection */}
-                <div className="flex bg-white/20 backdrop-blur-sm rounded-2xl p-2 border border-white/30">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">TimeTracker Pro</h1>
+                <p className="text-gray-600">Welcome back, {user.name}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              {/* Time Format Selection */}
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-gray-700">Time Format:</span>
+                <div className="flex bg-gray-100 rounded-lg p-1">
                   <button
                     onClick={() => handleTimeFormatChange('24')}
-                    className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                       timeFormat === '24'
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:text-gray-800'
                     }`}
                   >
                     24 Hour
                   </button>
                   <button
                     onClick={() => handleTimeFormatChange('12')}
-                    className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                       timeFormat === '12'
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:text-gray-800'
                     }`}
                   >
                     12 Hour
                   </button>
                 </div>
-                
-                <button
-                  onClick={() => setShowInstructions(true)}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 transition-all duration-300 rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  <Info className="w-5 h-5" />
-                  Help
-                </button>
-                
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 transition-all duration-300 rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Logout
-                </button>
               </div>
+              
+              <button
+                onClick={() => setShowInstructions(true)}
+                className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+              >
+                <Info className="w-5 h-5" />
+                Help
+              </button>
+              
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </button>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Tab Navigation */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-2 inline-flex">
+        <div className="flex justify-center mb-8">
+          <div className="bg-white rounded-xl shadow-sm border p-1 inline-flex">
             <button
               onClick={() => setActiveTab('daily')}
-              className={`py-4 px-8 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 ${
+              className={`py-3 px-8 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${
                 activeTab === 'daily'
-                  ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-lg transform scale-105'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              <Clock className="w-6 h-6" />
+              <Clock className="w-5 h-5" />
               Daily Calculator
             </button>
             <button
               onClick={() => setActiveTab('weekly')}
-              className={`py-4 px-8 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 ${
+              className={`py-3 px-8 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${
                 activeTab === 'weekly'
-                  ? 'bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 text-white shadow-lg transform scale-105'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-green-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              <BarChart3 className="w-6 h-6" />
+              <BarChart3 className="w-5 h-5" />
               Weekly Overview
             </button>
           </div>
@@ -203,52 +200,52 @@ export default function Dashboard() {
         {activeTab === 'daily' ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Daily Input */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Calculator className="w-6 h-6 text-white" />
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Calculator className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">Enter Work Times</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Enter Work Times</h3>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-lg font-bold text-white/90 mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Punch Times (separate with commas)
                   </label>
                   <textarea
                     value={timeEntries}
                     onChange={(e) => setTimeEntries(e.target.value)}
                     placeholder={timeFormat === '12' ? 'Example: 09:00 AM, 12:30 PM, 01:30 PM, 06:00 PM' : 'Example: 09:00, 12:30, 13:30, 18:00'}
-                    className="w-full h-32 p-4 bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl focus:ring-4 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 resize-none text-white placeholder-white/60 text-lg"
+                    className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
                   />
                 </div>
                 
                 {error && (
-                  <div className="p-4 bg-red-500/20 backdrop-blur-sm border border-red-400/50 rounded-2xl flex items-start gap-3">
-                    <AlertCircle className="w-6 h-6 text-red-300 mt-1 flex-shrink-0" />
-                    <p className="text-red-200 font-medium">{error}</p>
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-700">{error}</p>
                   </div>
                 )}
                 
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
                     onClick={handleCalculate}
                     disabled={!timeEntries.trim()}
-                    className="flex-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white py-4 px-6 rounded-2xl font-bold hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none"
+                    className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
                   >
-                    <Calculator className="w-6 h-6" />
+                    <Calculator className="w-5 h-5" />
                     Calculate Hours
                   </button>
                   <button
                     onClick={handleExampleInput}
-                    className="px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium"
                   >
                     Example
                   </button>
                   <button
                     onClick={clearInputs}
-                    className="px-6 py-4 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-2xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-4 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors duration-200 font-medium"
                   >
                     Clear
                   </button>
@@ -257,49 +254,49 @@ export default function Dashboard() {
             </div>
 
             {/* Daily Results */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+            <div className="bg-white rounded-xl shadow-sm border p-6">
               {results ? (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg">
-                        <Target className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <Target className="w-6 h-6 text-green-600" />
                       </div>
-                      <h3 className="text-2xl font-bold text-white">Today's Results</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">Today's Results</h3>
                     </div>
-                    <span className="text-5xl">{results.emoji}</span>
+                    <span className="text-4xl">{results.emoji}</span>
                   </div>
                   
                   {/* Main Stats */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-6 bg-gradient-to-br from-green-500/30 to-emerald-500/30 backdrop-blur-sm rounded-2xl border border-green-400/50 shadow-lg">
-                      <div className="text-4xl font-bold text-white mb-2">
+                    <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="text-2xl font-bold text-green-700 mb-1">
                         {results.totalWorkingTime}
                       </div>
-                      <div className="text-green-200 font-bold">Working Hours</div>
+                      <div className="text-green-600 font-medium">Working Hours</div>
                     </div>
                     
-                    <div className="text-center p-6 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 backdrop-blur-sm rounded-2xl border border-blue-400/50 shadow-lg">
-                      <div className="text-4xl font-bold text-white mb-2">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="text-2xl font-bold text-blue-700 mb-1">
                         {results.totalOfficeTime}
                       </div>
-                      <div className="text-blue-200 font-bold">Office Time</div>
+                      <div className="text-blue-600 font-medium">Office Time</div>
                     </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div>
-                    <div className="flex justify-between text-white font-bold mb-3">
+                    <div className="flex justify-between text-gray-700 font-medium mb-2">
                       <span>Progress to 8:30 target</span>
                       <span>{Math.min(Math.round(((results.totalWorkingHours * 60 + results.totalWorkingMinutes) / (8.5 * 60)) * 100), 100)}%</span>
                     </div>
-                    <div className="w-full bg-white/20 rounded-full h-4 shadow-inner backdrop-blur-sm">
+                    <div className="w-full bg-gray-200 rounded-full h-3">
                       <div 
-                        className={`h-4 rounded-full transition-all duration-1000 ${
-                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? 'bg-gradient-to-r from-green-400 to-emerald-500' :
-                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
-                          'bg-gradient-to-r from-red-400 to-pink-500'
-                        } shadow-lg`}
+                        className={`h-3 rounded-full transition-all duration-1000 ${
+                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 510) ? 'bg-green-500' :
+                          ((results.totalWorkingHours * 60 + results.totalWorkingMinutes) >= 480) ? 'bg-yellow-500' :
+                          'bg-red-500'
+                        }`}
                         style={{ width: `${Math.min(((results.totalWorkingHours * 60 + results.totalWorkingMinutes) / (8.5 * 60)) * 100, 100)}%` }}
                       ></div>
                     </div>
@@ -307,38 +304,38 @@ export default function Dashboard() {
 
                   {/* Achievement Badge */}
                   {results.totalWorkingHours >= 8 && results.totalWorkingMinutes >= 30 && (
-                    <div className="flex items-center justify-center gap-3 text-white bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl py-4 shadow-lg animate-pulse">
-                      <Award className="w-8 h-8" />
-                      <span className="font-bold text-xl">Daily Goal Achieved! 🎉</span>
+                    <div className="flex items-center justify-center gap-3 text-white bg-green-600 rounded-lg py-3">
+                      <Award className="w-6 h-6" />
+                      <span className="font-semibold">Daily Goal Achieved! 🎉</span>
                     </div>
                   )}
 
                   {/* Detailed Stats */}
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-sm rounded-2xl border border-purple-400/50 shadow-lg">
+                    <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200">
                       <div className="flex items-center gap-3">
-                        <Coffee className="w-6 h-6 text-purple-200" />
-                        <span className="font-bold text-white text-lg">Break Time</span>
+                        <Coffee className="w-5 h-5 text-purple-600" />
+                        <span className="font-medium text-purple-700">Break Time</span>
                       </div>
-                      <span className="font-bold text-white text-xl">{results.totalBreakTime}</span>
+                      <span className="font-semibold text-purple-700">{results.totalBreakTime}</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-red-500/30 to-pink-500/30 backdrop-blur-sm rounded-2xl border border-red-400/50 shadow-lg">
+                    <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
                       <div className="flex items-center gap-3">
-                        <AlertCircle className="w-6 h-6 text-red-200" />
-                        <span className="font-bold text-white text-lg">Missed Hours</span>
+                        <AlertCircle className="w-5 h-5 text-red-600" />
+                        <span className="font-medium text-red-700">Missed Hours</span>
                       </div>
-                      <span className="font-bold text-white text-xl">{results.missedHours}</span>
+                      <span className="font-semibold text-red-700">{results.missedHours}</span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center text-center h-full">
-                  <div className="w-24 h-24 bg-gradient-to-br from-gray-400/30 to-gray-500/30 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-6 shadow-lg">
-                    <Calculator className="w-12 h-12 text-white/60" />
+                <div className="flex flex-col items-center justify-center text-center h-full py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+                    <Calculator className="w-8 h-8 text-gray-400" />
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-4">Ready to Calculate?</h3>
-                  <p className="text-white/80 text-xl">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Calculate</h3>
+                  <p className="text-gray-600">
                     Enter your work times to see your daily breakdown
                   </p>
                 </div>
@@ -348,54 +345,54 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Weekly Input */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <BarChart3 className="w-6 h-6 text-white" />
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-green-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">Weekly Time Entry</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Weekly Time Entry</h3>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {days.map((day, index) => (
                     <div key={day} className="flex items-center gap-4">
-                      <div className="w-16 text-lg font-bold text-white/90">{day}</div>
+                      <div className="w-20 text-sm font-medium text-gray-700">{dayAbbr[index]}</div>
                       <input
                         type="text"
                         value={weeklyEntries[index]}
                         onChange={(e) => updateWeeklyEntry(index, e.target.value)}
                         placeholder={timeFormat === '12' ? '09:00 AM, 12:30 PM...' : '09:00, 12:30...'}
-                        className="flex-1 p-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl focus:ring-2 focus:ring-green-500/50 focus:border-green-400 transition-all duration-300 text-white placeholder-white/60"
+                        className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                       />
                     </div>
                   ))}
                 </div>
                 
                 {error && (
-                  <div className="p-4 bg-red-500/20 backdrop-blur-sm border border-red-400/50 rounded-2xl flex items-start gap-3">
-                    <AlertCircle className="w-6 h-6 text-red-300 mt-1 flex-shrink-0" />
-                    <p className="text-red-200 font-medium">{error}</p>
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-700">{error}</p>
                   </div>
                 )}
                 
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
                     onClick={handleWeeklyCalculate}
-                    className="flex-1 bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 text-white py-4 px-6 rounded-2xl font-bold hover:from-green-600 hover:via-teal-600 hover:to-cyan-600 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2"
                   >
-                    <BarChart3 className="w-6 h-6" />
+                    <BarChart3 className="w-5 h-5" />
                     Calculate Week
                   </button>
                   <button
                     onClick={handleWeeklyExampleInput}
-                    className="px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium"
                   >
                     Example
                   </button>
                   <button
                     onClick={clearInputs}
-                    className="px-6 py-4 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-2xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="px-4 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors duration-200 font-medium"
                   >
                     Clear
                   </button>
@@ -404,55 +401,52 @@ export default function Dashboard() {
             </div>
 
             {/* Weekly Results */}
-            <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+            <div className="bg-white rounded-xl shadow-sm border p-6">
               {weeklyResults ? (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                        <TrendingUp className="w-6 h-6 text-white" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <TrendingUp className="w-6 h-6 text-indigo-600" />
                       </div>
-                      <h3 className="text-2xl font-bold text-white">Weekly Summary</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">Weekly Summary</h3>
                     </div>
-                    <span className="text-5xl">{weeklyResults.overallEmoji}</span>
+                    <span className="text-4xl">{weeklyResults.overallEmoji}</span>
                   </div>
                   
                   {/* Weekly Stats */}
                   <div className="grid grid-cols-1 gap-4">
-                    <div className="text-center p-6 bg-gradient-to-br from-blue-500/30 to-indigo-500/30 backdrop-blur-sm rounded-2xl border border-blue-400/50 shadow-lg">
-                      <div className="text-3xl font-bold text-white mb-2">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="text-2xl font-bold text-blue-700 mb-1">
                         {weeklyResults.averageWorkingTime}
                       </div>
-                      <div className="text-blue-200 font-bold">Average Daily</div>
+                      <div className="text-blue-600 font-medium">Average Daily</div>
                     </div>
                     
-                    <div className="text-center p-6 bg-gradient-to-br from-green-500/30 to-emerald-500/30 backdrop-blur-sm rounded-2xl border border-green-400/50 shadow-lg">
-                      <div className="text-3xl font-bold text-white mb-2">
+                    <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="text-2xl font-bold text-green-700 mb-1">
                         {weeklyResults.totalWeeklyHours}
                       </div>
-                      <div className="text-green-200 font-bold">Total Weekly</div>
+                      <div className="text-green-600 font-medium">Total Weekly</div>
                     </div>
                   </div>
 
                   {/* Daily Breakdown */}
                   <div className="max-h-64 overflow-y-auto">
-                    <h4 className="font-bold text-white text-lg mb-4 flex items-center gap-2">
-                      <Star className="w-5 h-5 text-yellow-400" />
-                      Daily Breakdown
-                    </h4>
+                    <h4 className="font-semibold text-gray-900 mb-4">Daily Breakdown</h4>
                     <div className="space-y-3">
                       {weeklyResults.dailyResults.map((day, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg">
-                          <div className="flex items-center gap-4">
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
                             <span className="text-2xl">{day.emoji}</span>
-                            <span className="font-bold text-white w-16">{days[index]}</span>
+                            <span className="font-medium text-gray-700 w-16">{dayAbbr[index]}</span>
                           </div>
                           <div className="text-right">
-                            <div className="font-bold text-green-300 text-lg">{day.workingTime}</div>
+                            <div className="font-semibold text-green-600">{day.workingTime}</div>
                             {day.missedHours > 0 || day.missedMinutes > 0 ? (
-                              <div className="text-sm text-red-300 font-medium">-{day.missedTime}</div>
+                              <div className="text-sm text-red-600">-{day.missedTime}</div>
                             ) : (
-                              <div className="text-sm text-green-300 font-medium">✓ Goal met!</div>
+                              <div className="text-sm text-green-600">✓ Goal met!</div>
                             )}
                           </div>
                         </div>
@@ -461,12 +455,12 @@ export default function Dashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center text-center h-full">
-                  <div className="w-24 h-24 bg-gradient-to-br from-gray-400/30 to-gray-500/30 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-6 shadow-lg">
-                    <BarChart3 className="w-12 h-12 text-white/60" />
+                <div className="flex flex-col items-center justify-center text-center h-full py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+                    <BarChart3 className="w-8 h-8 text-gray-400" />
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-4">Weekly Analysis Ready</h3>
-                  <p className="text-white/80 text-xl">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Weekly Analysis Ready</h3>
+                  <p className="text-gray-600">
                     Fill in your work times to get weekly insights
                   </p>
                 </div>
@@ -478,82 +472,82 @@ export default function Dashboard() {
 
       {/* Instructions Modal */}
       {showInstructions && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto border border-white/50">
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-3xl font-bold text-gray-900 flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Info className="w-6 h-6 text-white" />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Info className="w-6 h-6 text-blue-600" />
                   </div>
                   How to Copy Work Times from Zing
                 </h3>
                 <button
                   onClick={() => setShowInstructions(false)}
-                  className="p-3 text-gray-400 hover:text-gray-600 transition-colors duration-200 rounded-2xl hover:bg-gray-100"
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors duration-200 rounded-lg hover:bg-gray-100"
                 >
-                  <X className="w-8 h-8" />
+                  <X className="w-6 h-6" />
                 </button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 border-2 border-blue-200 shadow-lg">
-                  <h4 className="font-bold text-blue-900 mb-6 flex items-center gap-3 text-xl">
-                    <span className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm px-4 py-2 rounded-full font-bold">24H</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                  <h4 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
+                    <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded font-bold">24H</span>
                     For 24 Hour Format
                   </h4>
-                  <ol className="text-blue-800 space-y-4">
-                    <li className="flex items-start gap-4">
-                      <span className="bg-blue-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">1</span>
-                      <span className="font-medium text-lg">Login to Zing</span>
+                  <ol className="text-blue-800 space-y-3">
+                    <li className="flex items-start gap-3">
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">1</span>
+                      <span>Login to Zing</span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="bg-blue-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">2</span>
-                      <span className="font-medium text-lg">Click the <strong>Cube icon</strong> in the upper left corner</span>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">2</span>
+                      <span>Click the <strong>Cube icon</strong> in the upper left corner</span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="bg-blue-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">3</span>
-                      <span className="font-medium text-lg">Go to <strong>Time Cards</strong></span>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">3</span>
+                      <span>Go to <strong>Time Cards</strong></span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="bg-blue-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">4</span>
-                      <span className="font-medium text-lg">Copy the swipes and paste here</span>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">4</span>
+                      <span>Copy the swipes and paste here</span>
                     </li>
                   </ol>
                 </div>
                 
-                <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 border-2 border-green-200 shadow-lg">
-                  <h4 className="font-bold text-green-900 mb-6 flex items-center gap-3 text-xl">
-                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm px-4 py-2 rounded-full font-bold">12H</span>
+                <div className="bg-green-50 rounded-lg p-6 border border-green-200">
+                  <h4 className="font-bold text-green-900 mb-4 flex items-center gap-2">
+                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold">12H</span>
                     For 12 Hour Format
                   </h4>
-                  <ol className="text-green-800 space-y-4">
-                    <li className="flex items-start gap-4">
-                      <span className="bg-green-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">1</span>
-                      <span className="font-medium text-lg">Login to Zing</span>
+                  <ol className="text-green-800 space-y-3">
+                    <li className="flex items-start gap-3">
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">1</span>
+                      <span>Login to Zing</span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="bg-green-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">2</span>
-                      <span className="font-medium text-lg">Go to <strong>Calendar</strong></span>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">2</span>
+                      <span>Go to <strong>Calendar</strong></span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="bg-green-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">3</span>
-                      <span className="font-medium text-lg">Click <strong>View More</strong></span>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">3</span>
+                      <span>Click <strong>View More</strong></span>
                     </li>
-                    <li className="flex items-start gap-4">
-                      <span className="bg-green-500 text-white text-sm px-3 py-2 rounded-full font-bold mt-1">4</span>
-                      <span className="font-medium text-lg">Find <strong>Raw Swipes</strong>, copy and paste here</span>
+                    <li className="flex items-start gap-3">
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-bold mt-0.5">4</span>
+                      <span>Find <strong>Raw Swipes</strong>, copy and paste here</span>
                     </li>
                   </ol>
                 </div>
               </div>
               
-              <div className="mt-8 p-8 bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-yellow-300 rounded-3xl shadow-lg">
-                <div className="flex items-start gap-4">
-                  <AlertCircle className="w-8 h-8 text-yellow-600 mt-1 flex-shrink-0" />
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-bold text-yellow-800 mb-3 text-xl">Important Notes:</p>
-                    <ul className="text-yellow-700 space-y-2 text-lg">
+                    <p className="font-semibold text-yellow-800 mb-2">Important Notes:</p>
+                    <ul className="text-yellow-700 space-y-1">
                       <li>• Times must be in pairs (in/out)</li>
                       <li>• Target: 8 hours 30 minutes per day</li>
                       <li>• Uneven swipes will show a warning</li>
