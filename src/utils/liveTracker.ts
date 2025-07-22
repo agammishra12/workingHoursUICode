@@ -11,6 +11,8 @@ export interface LiveTrackingData {
   remainingHours: number;
   remainingMinutes: number;
   completionTime: string;
+  completionMessage: string;
+  achievementLevel: string;
   progressPercentage: number;
   isCurrentlyWorking: boolean;
   emoji: string;
@@ -143,25 +145,47 @@ export function calculateLiveHours(timeString: string): LiveTrackingData {
   
   // Calculate completion time
   let completionTime = '';
+  let completionMessage = '';
   if (remainingMinutes > 0) {
     if (isCurrentlyWorking) {
       // If currently working, add remaining time to current time
       completionTime = addMinutesToTime(currentTime, remainingMinutes);
+      completionMessage = 'If you continue working without breaks';
     } else {
       // If on break, completion time is current time + remaining time (when they resume)
       completionTime = addMinutesToTime(currentTime, remainingMinutes);
+      completionMessage = 'When you resume working (excluding current break time)';
     }
   } else {
     completionTime = 'Already completed!';
+    const extraMinutes = totalWorkingMinutes - targetMinutes;
+    const extraHours = Math.floor(extraMinutes / 60);
+    const extraMins = extraMinutes % 60;
+    completionMessage = `Completed ${extraHours}:${extraMins.toString().padStart(2, '0')} extra!`;
   }
   
   // Calculate progress percentage
   const progressPercentage = Math.min(Math.round((totalWorkingMinutes / targetMinutes) * 100), 100);
   
-  // Determine emoji based on progress
-  let emoji = '😊'; // Default happy
+  // Determine emoji and achievement level based on progress
+  let emoji = '😊';
+  let achievementLevel = '';
+  
   if (totalWorkingMinutes >= targetMinutes) {
-    emoji = totalWorkingMinutes >= targetMinutes + 60 ? '🎉' : '😊'; // Celebration if over 9:30, happy if over 8:30
+    const extraMinutes = totalWorkingMinutes - targetMinutes;
+    if (extraMinutes >= 150) { // 10:00+ hours
+      emoji = '🏆';
+      achievementLevel = 'Workaholic Champion';
+    } else if (extraMinutes >= 90) { // 9:30+ hours  
+      emoji = '🥇';
+      achievementLevel = 'Gold Performer';
+    } else if (extraMinutes >= 30) { // 9:00+ hours
+      emoji = '🥈';
+      achievementLevel = 'Silver Achiever';
+    } else { // 8:30+ hours
+      emoji = '🥉';
+      achievementLevel = 'Bronze Finisher';
+    }
   } else if (totalWorkingMinutes >= targetMinutes - 30) {
     emoji = '😐'; // Neutral if close
   } else if (totalWorkingMinutes >= targetMinutes - 120) {
@@ -188,6 +212,8 @@ export function calculateLiveHours(timeString: string): LiveTrackingData {
     remainingHours: Math.floor(remainingMinutes / 60),
     remainingMinutes: remainingMinutes % 60,
     completionTime,
+    completionMessage,
+    achievementLevel,
     progressPercentage,
     isCurrentlyWorking,
     emoji,

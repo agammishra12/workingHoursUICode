@@ -25,6 +25,8 @@ export interface LiveTrackingData {
   remainingHours: number;
   remainingMinutes: number;
   completionTime: string;
+  completionMessage: string;
+  achievementLevel: string;
   progressPercentage: number;
   isCurrentlyWorking: boolean;
   emoji: string;

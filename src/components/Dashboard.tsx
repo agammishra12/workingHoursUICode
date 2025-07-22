@@ -356,12 +356,33 @@ export default function Dashboard() {
                   </div>
 
                   {/* Achievement Badge */}
-                  {results.totalWorkingHours >= 8 && results.totalWorkingMinutes >= 30 && (
-                    <div className="flex items-center justify-center gap-3 text-white bg-green-600 rounded-lg py-3">
+                  {(() => {
+                    const totalMinutes = results.totalWorkingHours * 60 + results.totalWorkingMinutes;
+                    const targetMinutes = 8 * 60 + 30;
+                    const extraMinutes = totalMinutes - targetMinutes;
+                    
+                    if (totalMinutes < targetMinutes) return null;
+                    
+                    let achievementLevel = '';
+                    let bgColor = '';
+                    
+                    if (extraMinutes >= 150) { // 10:00+ hours
+                      achievementLevel = 'Workaholic Champion';
+                      bgColor = 'bg-purple-600';
+                    } else if (extraMinutes >= 90) { // 9:30+ hours  
+                      achievementLevel = 'Gold Performer';
+                      bgColor = 'bg-yellow-500';
+                    } else if (extraMinutes >= 30) { // 9:00+ hours
+                      achievementLevel = 'Silver Achiever';
+                      bgColor = 'bg-gray-400';
+                    } else { // 8:30+ hours
+                      achievementLevel = 'Bronze Finisher';
+                      bgColor = 'bg-orange-500';
+                    }
+                    
+                    return (
+                      <div className={`flex items-center justify-center gap-3 text-white ${bgColor} rounded-lg py-3`}>
                       <Award className="w-6 h-6" />
-                      <span className="font-semibold">Daily Goal Achieved! 🎉</span>
-                    </div>
-                  )}
 
                   {/* Detailed Stats */}
                   <div className="space-y-3">
@@ -529,18 +550,19 @@ export default function Dashboard() {
                     <div className="text-2xl font-bold text-indigo-700 mb-1">
                       {formatTimeDisplay(liveResults.completionTime, timeFormat)}
                     </div>
-                    <div className="text-indigo-600 text-sm">
-                      {liveResults.isCurrentlyWorking 
-                        ? 'If you continue working without breaks' 
-                        : 'When you resume working (excluding current break time)'}
-                    </div>
+                    <div className="text-indigo-600 text-sm">{liveResults.completionMessage}</div>
                   </div>
 
-                  {/* Achievement Badge */}
-                  {liveResults.progressPercentage >= 100 && (
-                    <div className="flex items-center justify-center gap-3 text-white bg-green-600 rounded-lg py-3">
-                      <CheckCircle2 className="w-6 h-6" />
-                      <span className="font-semibold">Target Already Achieved! 🎉</span>
+                  {/* Achievement Badges */}
+                  {liveResults.achievementLevel && (
+                    <div className={`flex items-center justify-center gap-3 text-white rounded-lg py-3 ${
+                      liveResults.achievementLevel === 'Workaholic Champion' ? 'bg-purple-600' :
+                      liveResults.achievementLevel === 'Gold Performer' ? 'bg-yellow-500' :
+                      liveResults.achievementLevel === 'Silver Achiever' ? 'bg-gray-400' :
+                      'bg-orange-500'
+                    }`}>
+                      <Award className="w-6 h-6" />
+                      <span className="font-semibold">{liveResults.achievementLevel}!</span>
                     </div>
                   )}
 
