@@ -91,30 +91,61 @@ export function calculateLiveHours(timeString: string): LiveTrackingData {
     }
   }
 
+  // Remove duplicate consecutive times but keep the structure for live tracking
+  const cleanedTimes = [];
+  for (let i = 0; i < swipeTimes.length; i++) {
+    // For live tracking, we need to be more careful about removing duplicates
+    // Only remove if we have a pair of same times
+    if (i < swipeTimes.length - 1 && swipeTimes[i] === swipeTimes[i + 1]) {
+      i++; // Skip both times
+      continue;
+    }
+    cleanedTimes.push(swipeTimes[i]);
+  }
+
+  // Ensure we still have odd number of entries for live tracking
+  if (cleanedTimes.length === 0) {
+    throw new Error('No valid swipe data found after cleaning.');
+  }
+
+  if (cleanedTimes.length % 2 === 0) {
+    throw new Error('After cleaning, even number of entries found. Live tracker needs incomplete data.');
+  }
   const currentTime = getCurrentTime();
   const currentTimeMinutes = parseTime(currentTime);
   
   // Determine if currently working (last entry should be a punch-in)
-  const isCurrentlyWorking = swipeTimes.length % 2 === 1;
+  const isCurrentlyWorking = cleanedTimes.length % 2 === 1;
   
   // Calculate working time so far
   let totalWorkingMinutes = 0;
   
   // Process complete pairs
-  for (let i = 0; i < swipeTimes.length - 1; i += 2) {
-    const startTime = parseTime(swipeTimes[i]);
-    const endTime = parseTime(swipeTimes[i + 1]);
+  for (let i = 0; i < cleanedTimes.length - 1; i += 2) {
+    const startTime = parseTime(cleanedTimes[i]);
+    const endTime = parseTime(cleanedTimes[i + 1]);
     
     if (endTime <= startTime) {
-      throw new Error(`End time must be after start time: ${swipeTimes[i]} -> ${swipeTimes[i + 1]}`);
+      // Handle next day scenario or skip if same time
+      if (endTime < startTime) {
+        const nextDayEndTime = endTime + (24 * 60);
+        const sessionMinutes = nextDayEndTime - startTime;
+        if (sessionMinutes > 0 && sessionMinutes <= 16 * 60) {
+          totalWorkingMinutes += sessionMinutes;
+        }
+      }
+      continue;
     }
     
-    totalWorkingMinutes += endTime - startTime;
+    const sessionMinutes = endTime - startTime;
+    if (sessionMinutes >= 1) {
+      totalWorkingMinutes += sessionMinutes;
+    }
   }
   
   // Add current working session if currently working
   if (isCurrentlyWorking) {
-    const lastPunchIn = parseTime(swipeTimes[swipeTimes.length - 1]);
+    const lastPunchIn = parseTime(cleanedTimes[cleanedTimes.length - 1]);
     if (currentTimeMinutes < lastPunchIn) {
       throw new Error('Current time cannot be before the last punch-in time. Please check your data.');
     }
@@ -122,21 +153,27 @@ export function calculateLiveHours(timeString: string): LiveTrackingData {
   }
 
   // Calculate total office time
-  const firstPunch = parseTime(swipeTimes[0]);
+  const firstPunch = parseTime(cleanedTimes[0]);
   const totalOfficeMinutes = currentTimeMinutes - firstPunch;
 
   // Calculate total break time
   let totalBreakMinutes = 0;
-  for (let i = 1; i < swipeTimes.length - 1; i += 2) {
-    const outTime = parseTime(swipeTimes[i]);
-    const inTime = parseTime(swipeTimes[i + 1]);
-    totalBreakMinutes += inTime - outTime;
+  for (let i = 1; i < cleanedTimes.length - 1; i += 2) {
+    const outTime = parseTime(cleanedTimes[i]);
+    const inTime = parseTime(cleanedTimes[i + 1]);
+    const breakDuration = inTime - outTime;
+    if (breakDuration > 0) {
+      totalBreakMinutes += breakDuration;
+    }
   }
   
   // If currently on break, add current break time
-  if (!isCurrentlyWorking && swipeTimes.length > 1) {
-    const lastPunchOut = parseTime(swipeTimes[swipeTimes.length - 1]);
-    totalBreakMinutes += currentTimeMinutes - lastPunchOut;
+  if (!isCurrentlyWorking && cleanedTimes.length > 1) {
+    const lastPunchOut = parseTime(cleanedTimes[cleanedTimes.length - 1]);
+    const currentBreakTime = currentTimeMinutes - lastPunchOut;
+    if (currentBreakTime > 0) {
+      totalBreakMinutes += currentBreakTime;
+    }
   }
 
   // Calculate remaining time needed (8:30 target)

@@ -165,30 +165,78 @@ export function calculateWorkingHours(timeString: string): WorkingHoursData {
     }
   }
 
+  // Remove duplicate consecutive times and handle same time in/out scenarios
+  const cleanedTimes = [];
+  for (let i = 0; i < swipeTimes.length; i++) {
+    // Skip if this time is the same as the next time (same time in/out)
+    if (i < swipeTimes.length - 1 && swipeTimes[i] === swipeTimes[i + 1]) {
+      i++; // Skip both the in and out time
+      continue;
+    }
+    cleanedTimes.push(swipeTimes[i]);
+  }
+
+  // Check if we still have valid pairs after cleaning
+  if (cleanedTimes.length === 0) {
+    throw new Error('No valid working time found. All swipe pairs had same in/out times.');
+  }
+
+  if (cleanedTimes.length % 2 !== 0) {
+    throw new Error('⚠️ After removing same-time swipes, uneven entries remain. Please check your swipe data.');
+  }
+
   // Calculate total working time
   let totalWorkingMinutes = 0;
-  for (let i = 0; i < swipeTimes.length; i += 2) {
-    const startTime = parseTime(swipeTimes[i]);
-    const endTime = parseTime(swipeTimes[i + 1]);
+  let validWorkingSessions = 0;
+  
+  for (let i = 0; i < cleanedTimes.length; i += 2) {
+    const startTime = parseTime(cleanedTimes[i]);
+    const endTime = parseTime(cleanedTimes[i + 1]);
     
     if (endTime <= startTime) {
-      throw new Error(`End time must be after start time: ${swipeTimes[i]} -> ${swipeTimes[i + 1]}`);
+      // Handle case where end time is before start time (next day scenario)
+      if (endTime < startTime) {
+        // Assume it's next day if end time is significantly earlier
+        const nextDayEndTime = endTime + (24 * 60); // Add 24 hours
+        const sessionMinutes = nextDayEndTime - startTime;
+        
+        // Only add if it's a reasonable working session (less than 16 hours)
+        if (sessionMinutes > 0 && sessionMinutes <= 16 * 60) {
+          totalWorkingMinutes += sessionMinutes;
+          validWorkingSessions++;
+        }
+      }
+      // If same time, we already filtered it out, so this shouldn't happen
+    } else {
+      const sessionMinutes = endTime - startTime;
+      // Only count sessions longer than 1 minute to avoid accidental same-time swipes
+      if (sessionMinutes >= 1) {
+        totalWorkingMinutes += sessionMinutes;
+        validWorkingSessions++;
+      }
     }
-    
-    totalWorkingMinutes += endTime - startTime;
+  }
+
+  if (validWorkingSessions === 0) {
+    throw new Error('No valid working sessions found. Please check your swipe times.');
   }
 
   // Calculate total office time
-  const firstPunch = parseTime(swipeTimes[0]);
-  const lastPunch = parseTime(swipeTimes[swipeTimes.length - 1]);
+  const firstPunch = parseTime(cleanedTimes[0]);
+  const lastPunch = parseTime(cleanedTimes[cleanedTimes.length - 1]);
   const totalOfficeMinutes = lastPunch - firstPunch;
 
   // Calculate total break time
   let totalBreakMinutes = 0;
-  for (let i = 1; i < swipeTimes.length - 1; i += 2) {
-    const outTime = parseTime(swipeTimes[i]);
-    const inTime = parseTime(swipeTimes[i + 1]);
-    totalBreakMinutes += inTime - outTime;
+  for (let i = 1; i < cleanedTimes.length - 1; i += 2) {
+    const outTime = parseTime(cleanedTimes[i]);
+    const inTime = parseTime(cleanedTimes[i + 1]);
+    const breakDuration = inTime - outTime;
+    
+    // Only count positive break durations
+    if (breakDuration > 0) {
+      totalBreakMinutes += breakDuration;
+    }
   }
 
   // Calculate missed hours (assuming 9 hours expected)
