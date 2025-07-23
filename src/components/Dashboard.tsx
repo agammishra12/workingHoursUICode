@@ -262,6 +262,16 @@ export default function Dashboard() {
               </div>
               
               <div className="space-y-4">
+                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle className="w-5 h-5 text-yellow-600" />
+                    <span className="font-semibold text-yellow-700">Data Cleaning</span>
+                  </div>
+                  <p className="text-yellow-600 text-sm">
+                    The system automatically removes duplicate consecutive times (e.g., "20:39, 20:39") to ensure accurate calculations.
+                  </p>
+                </div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Punch Times (separate with commas)
@@ -439,6 +449,16 @@ export default function Dashboard() {
                   </div>
                   <p className="text-orange-600 text-sm">
                     Enter your incomplete swipe data (odd number of entries). The system will use the current time to calculate your progress and predict when you'll complete 8:30 hours.
+                  </p>
+                </div>
+                
+                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle className="w-5 h-5 text-yellow-600" />
+                    <span className="font-semibold text-yellow-700">Data Cleaning</span>
+                  </div>
+                  <p className="text-yellow-600 text-sm">
+                    Duplicate consecutive times are automatically removed to ensure accurate tracking.
                   </p>
                 </div>
                 
