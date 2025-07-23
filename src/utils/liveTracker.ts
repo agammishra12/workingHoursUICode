@@ -73,30 +73,10 @@ function addMinutesToTime(timeString: string, minutesToAdd: number): string {
 
 export function calculateLiveHours(timeString: string): LiveTrackingData {
   // Parse the input string and create array of times
-  let swipeTimes = timeString.split(',').map(time => convertTo24Hour(time.trim())).filter(time => time);
+  const swipeTimes = timeString.split(',').map(time => convertTo24Hour(time.trim())).filter(time => time);
   
   if (swipeTimes.length === 0) {
     throw new Error('No time entries provided');
-  }
-
-  // Check for and remove duplicate consecutive times
-  const originalLength = swipeTimes.length;
-  const cleanedTimes = [];
-  const duplicates = [];
-  
-  for (let i = 0; i < swipeTimes.length; i++) {
-    if (i === 0 || swipeTimes[i] !== swipeTimes[i - 1]) {
-      cleanedTimes.push(swipeTimes[i]);
-    } else {
-      duplicates.push(swipeTimes[i]);
-    }
-  }
-  
-  swipeTimes = cleanedTimes;
-  
-  // Warn about duplicates if any were found
-  if (duplicates.length > 0) {
-    console.warn(`⚠️ Removed ${duplicates.length} duplicate consecutive time(s): ${duplicates.join(', ')}`);
   }
   
   if (swipeTimes.length % 2 === 0) {
